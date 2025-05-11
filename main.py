@@ -89,11 +89,14 @@ def process_events(events, *event_handling_objects):
         
         if event.type == GAME_START_EVENT:
             GameManager.update_game_state(GAME_STATE.PLAYING)
+            GameManager.GAME_SCORE = 0
+            GameManager.ui.update(f"Score: {GameManager.GAME_SCORE}")
             #asteroid_field.handle_event(event)
             #player.handle_event(event)
 
         if event.type == GAME_OVER_EVENT:
             GameManager.update_game_state(GAME_STATE.OVER)
+            #TODO: add GameManager.game_over handler - update state, score and add to leaderboard
             #player.handle_event(event)
 
         if event.type != pygame.KEYDOWN:
