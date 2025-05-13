@@ -10,7 +10,7 @@ class GameUI(pygame.sprite.Sprite):
         self._layer = 10
         super().__init__(self.containers)
         
-        self.score_text = UIText("Arial", 20, f"Score: {GameManager.GAME_SCORE}", [50, 25])
+        self.score_text = UIText(20, f"Score: {GameManager.GAME_SCORE}", [50, 25])
 
     def update(self, text):
         self.score_text.render(text)

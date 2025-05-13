@@ -5,6 +5,7 @@ from constants import *
 from events import *
 from utils import UIText, UIButton
 from gamestatemanager import GameManager, GAME_STATE
+from leaderboard import Leaderboard
 
 
 class Menu(pygame.sprite.Sprite):
@@ -15,15 +16,11 @@ class Menu(pygame.sprite.Sprite):
         super().__init__(self.containers)
         
         #self._layer = 0
-        self.pre_menu_text = UIText("Arial", 20, UI_PRE_MENU_TEXT, [SCREEN_WIDTH/2, SCREEN_HEIGHT-(SCREEN_HEIGHT/4)])
-        self.game_over_text = UIText("Arial", 32, UI_GAME_OVER_TEXT, [SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - BUTTON_HEIGHT])
-        button_x_pos = SCREEN_WIDTH/2 - BUTTON_WIDTH/2
-        button_y_pos = SCREEN_HEIGHT/2 + 20
-        self.start_button = UIButton("Start", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_start)
-        button_y_pos += BUTTON_HEIGHT + 20
-        self.leaderboard_button = UIButton("Leaderboard", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_start)
-        button_y_pos += BUTTON_HEIGHT + 60
-        self.quit_button = UIButton("Quit", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_quit)
+        self.pre_menu_text = UIText(20, UI_PRE_MENU_TEXT, [SCREEN_WIDTH/2, SCREEN_HEIGHT-(SCREEN_HEIGHT/4)])
+        self.game_over_text = UIText(32, UI_GAME_OVER_TEXT, [SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - BUTTON_HEIGHT * 2])
+
+        self.initialize_buttons()
+        
 
         
     def draw(self, screen):
@@ -36,8 +33,9 @@ class Menu(pygame.sprite.Sprite):
                 self.draw_menu_buttons(screen)
                 pass
 
-            case GAME_STATE.OVER:
+            case GAME_STATE.OVER | GAME_STATE.COLLECTING_SCORE:
                 self.draw_game_over_text(screen)
+                Leaderboard.draw(screen)
                 self.draw_menu_buttons(screen)
 
 
@@ -59,6 +57,16 @@ class Menu(pygame.sprite.Sprite):
         self.start_button.draw(screen)
         self.leaderboard_button.draw(screen)
         self.quit_button.draw(screen)
+
+
+    def initialize_buttons(self):
+        button_x_pos = SCREEN_WIDTH/2 - BUTTON_WIDTH/2
+        button_y_pos = SCREEN_HEIGHT/2 + 20
+        self.start_button = UIButton("Start", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_start)
+        button_y_pos += BUTTON_HEIGHT + 20
+        self.leaderboard_button = UIButton("Leaderboard", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_start)
+        button_y_pos += BUTTON_HEIGHT + 60
+        self.quit_button = UIButton("Quit", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_quit)
 
     def get_buttons(self):
         return (self.start_button, self.leaderboard_button, self.quit_button)
