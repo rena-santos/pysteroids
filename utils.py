@@ -3,8 +3,9 @@ import pygame
 
 class UIText:
     
-    def __init__(self, size, text, position="[0,0]", font="Arial", color="white", background="black"):
+    def __init__(self, size, text, position=[10,10], font="Arial", color="white", background="black", bold=False, italic=False):
         self.font = pygame.font.SysFont(font, size)
+        self.set_font_characteristics(bold, italic)
         self.rendered_surface = self.font.render(text, True, color, background)
         self.rect = self.rendered_surface.get_rect()
         self.rect.center = position
@@ -14,6 +15,12 @@ class UIText:
 
     def draw(self, screen):
         screen.blit(self.rendered_surface, self.rect)
+
+    def set_font_characteristics(self, bold=False, italic=False):
+        if bold:
+            self.font.bold = True
+        if italic:
+            self.font.italic = True
 
 
 class UIButton:

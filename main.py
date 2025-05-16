@@ -5,6 +5,7 @@ from constants import *
 from events import *
 from objectgroups import ObjectGroups
 from gamestatemanager import GameManager, GAME_STATE
+from leaderboard import Leaderboard
 from menu import Menu
 from gameui import GameUI
 from player import Player
@@ -20,6 +21,7 @@ def main():
     #Game Variables
     GameManager.update_game_state(GAME_STATE.MENU)
     groups = create_and_assign_groups()
+    Leaderboard.load_scores()
     GameManager.menu = Menu()
     GameManager.ui = GameUI()
     groups.menu_drawable.add(GameManager.menu)
@@ -30,12 +32,12 @@ def main():
 
     #Main game loop
     while True:
-        process_events(pygame.event.get(), player, asteroid_field)
+        process_events(pygame.event.get(exclude=pygame.KEYDOWN), player, asteroid_field)
             
         screen.fill("black")
 
         match GameManager.GAME_STATE:
-            case GAME_STATE.MENU:
+            case GAME_STATE.MENU | GAME_STATE.SCORE:
                 groups.menu_updatable.update(dt)
                 for obj in groups.menu_drawable:
                     obj.draw(screen)
@@ -46,9 +48,8 @@ def main():
                 for obj in groups.drawable:
                     obj.draw(screen)
                 detect_collisions(player, groups.asteroids, groups.shots)
-                #ui.update(f"Score: {GameStateManager.GAME_SCORE}")
 
-            case GAME_STATE.OVER:
+            case GAME_STATE.OVER | GAME_STATE.COLLECTING_SCORE:
                 groups.menu_updatable.update(dt)
                 for obj in groups.menu_drawable:
                     obj.draw(screen)
@@ -83,6 +84,10 @@ def process_events(events, *event_handling_objects):
             GameManager.update_game_state(GAME_STATE.MENU)
             continue
 
+        if event.type == EVENT_OPEN_LEADERBOARD:
+            GameManager.update_game_state(GAME_STATE.SCORE)
+            continue
+
         if event.type == SCORING_EVENT:
             event.obj.handle_event(event)
             continue
@@ -95,9 +100,8 @@ def process_events(events, *event_handling_objects):
             #player.handle_event(event)
 
         if event.type == GAME_OVER_EVENT:
-            GameManager.update_game_state(GAME_STATE.OVER)
+            GameManager.update_game_state(GAME_STATE.COLLECTING_SCORE)
             #TODO: add GameManager.game_over handler - update state, score and add to leaderboard
-            #player.handle_event(event)
 
         if event.type != pygame.KEYDOWN:
             for obj in event_handling_objects:
@@ -121,7 +125,7 @@ def detect_shots_collisions(shots, asteroids):
         shot.destroy()
         for asteroid in asteroids:
             asteroid.destroy()
-            GameManager.GAME_SCORE += asteroid.radius
+            GameManager.GAME_SCORE += int(asteroid.radius)
             pygame.event.post(pygame.event.Event(SCORING_EVENT, obj=GameManager.ui, text=f"Score: {GameManager.GAME_SCORE}"))
 
 

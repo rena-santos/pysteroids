@@ -33,6 +33,9 @@ class Menu(pygame.sprite.Sprite):
                 self.draw_menu_buttons(screen)
                 pass
 
+            case GAME_STATE.SCORE:
+                self.draw_leaderboard(screen)
+
             case GAME_STATE.OVER | GAME_STATE.COLLECTING_SCORE:
                 self.draw_game_over_text(screen)
                 Leaderboard.draw(screen)
@@ -58,13 +61,16 @@ class Menu(pygame.sprite.Sprite):
         self.leaderboard_button.draw(screen)
         self.quit_button.draw(screen)
 
+    def draw_leaderboard(self, screen):
+        Leaderboard.draw(screen)
+
 
     def initialize_buttons(self):
         button_x_pos = SCREEN_WIDTH/2 - BUTTON_WIDTH/2
         button_y_pos = SCREEN_HEIGHT/2 + 20
         self.start_button = UIButton("Start", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_start)
         button_y_pos += BUTTON_HEIGHT + 20
-        self.leaderboard_button = UIButton("Leaderboard", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_start)
+        self.leaderboard_button = UIButton("Leaderboard", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_leaderboard)
         button_y_pos += BUTTON_HEIGHT + 60
         self.quit_button = UIButton("Quit", pygame.Vector2(button_x_pos, button_y_pos), BUTTON_WIDTH, BUTTON_HEIGHT, self.click_quit)
 
@@ -73,6 +79,9 @@ class Menu(pygame.sprite.Sprite):
 
     def click_start(self):
         pygame.event.post(pygame.event.Event(GAME_START_EVENT))
+
+    def click_leaderboard(self):
+        pygame.event.post(pygame.event.Event(EVENT_OPEN_LEADERBOARD))
 
     def click_quit(self):
         pygame.event.post(pygame.event.Event(pygame.QUIT))

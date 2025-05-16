@@ -8,12 +8,15 @@ class GAME_STATE(Enum):
     MENU = 2
     PLAYING = 3
     OVER = 4
+    COLLECTING_SCORE = 5
+    SCORE = 6
 
 class GameManager():
     ''
     
     GAME_STATE = GAME_STATE.MENU
     GAME_SCORE: int = 0
+    GAME_SCORE_NAME: str = ""
 
     def update_game_state(new_state):
         GameManager.GAME_STATE = new_state
